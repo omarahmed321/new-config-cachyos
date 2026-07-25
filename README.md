@@ -16,14 +16,14 @@
 يمكنك تثبيت واستعادة نظامك بالكامل على أي جهاز CachyOS جديد أو نظام Arch مغسول بأمر واحد عبر الطرفية:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/<username>/<repo>/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/omarahmed321/new-config-cachyos/main/install.sh | bash
 ```
 
 أو يمكنك استنساخ الريبو وتشغيله محلياً:
 
 ```bash
-git clone https://github.com/<username>/<repo>.git
-cd <repo>
+git clone https://github.com/omarahmed321/new-config-cachyos.git
+cd new-config-cachyos
 chmod +x install.sh sync.sh
 ./install.sh
 ```
