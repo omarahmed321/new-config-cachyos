@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# omar - CLI Documentation for custom commands configured on this system
+
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}${BOLD}======================================================================${NC}"
+echo -e "          ${GREEN}${BOLD} Omar's Custom System Commands Documentation ${NC}"
+echo -e "${BLUE}${BOLD}======================================================================${NC}"
+echo -e "Here is a list of all custom scripts and commands configured on your system:\n"
+
+echo -e "🎨 ${CYAN}${BOLD}Wallpaper Management:${NC}"
+echo -e "  ${GREEN}${BOLD}addwallpaper${NC} : Open a GUI file picker (or pass file paths as arguments)"
+echo -e "                 to safely copy new wallpapers to the active theme folder"
+echo -e "                 without changing the current background automatically.\n"
+
+echo -e "📝 ${CYAN}${BOLD}Task Management (todo-list):${NC}"
+echo -e "  ${GREEN}${BOLD}todo <text>${NC}  : Add a new task to your todo list."
+echo -e "  ${GREEN}${BOLD}doing${NC}        : Pick a task using fzf and move it to active (doing) state."
+echo -e "  ${GREEN}${BOLD}donetask${NC}     : Pick an active task using fzf and mark it as completed."
+echo -e "  ${GREEN}${BOLD}rmtask${NC}       : Pick a task using fzf and delete it from the list."
+echo -e "  ${GREEN}${BOLD}edittask${NC}     : Open the raw tasks text file directly in your default editor"
+echo -e "                 for manual editing or rearranging.\n"
+
+echo -e "🔒 ${CYAN}${BOLD}Lock Screen & Monitors:${NC}"
+echo -e "  ${GREEN}${BOLD}Super + L${NC}    : Locks the screen dynamically, rendering widgets ONLY on your"
+echo -e "                 primary 144Hz screen and turning off/blanking the other screen.\n"
+
+echo -e "${BLUE}${BOLD}======================================================================${NC}"
+echo -e "Tip: You can edit or add more commands to this helper by modifying"
+echo -e "     the ${YELLOW}~/.local/share/bin/omar${NC} script."
+echo -e "${BLUE}${BOLD}======================================================================${NC}"

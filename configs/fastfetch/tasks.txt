@@ -1,0 +1,5 @@
+- Finish system setup
+- niceRiceOmar
+─────────────────────────────────
+todo <task> / doing / donetask
+rmtask / edittask

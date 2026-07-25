@@ -1,0 +1,32 @@
+# Sensitive keys and credentials
+.ssh/
+id_rsa*
+id_ed25519*
+*.pem
+*.key
+*.pub
+.gnupg/
+
+# Environment files, tokens, and passwords
+.env
+*.env
+.token
+.git-credentials
+credentials.json
+*.secret
+
+# History and state files
+.bash_history
+.zsh_history
+.python_history
+.histfile
+.lesshst
+.sudo_as_admin_successful
+
+# Cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+.cache/
+tmp/
+*.log

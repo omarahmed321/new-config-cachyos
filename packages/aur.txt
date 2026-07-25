@@ -1,0 +1,7 @@
+8188eu-dkms-git
+antigravity
+antigravity-cli
+antigravity-ide
+bibata-cursor-theme-bin
+envycontrol
+sddm-astronaut-theme
