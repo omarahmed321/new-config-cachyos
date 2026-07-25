@@ -6,6 +6,7 @@ alsa-plugins
 alsa-utils
 amd-ucode
 awesome-terminal-fonts
+gettext
 awww
 base
 base-devel

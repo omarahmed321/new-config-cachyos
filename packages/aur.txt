@@ -2,3 +2,4 @@
 bibata-cursor-theme-bin
 envycontrol
 sddm-astronaut-theme
+swww

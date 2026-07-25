@@ -101,9 +101,9 @@ else
 fi
 
 #-------------------------------------------------------------------------------
-# 3. AUR Helper Check / Installation
+# 3. AUR Helper Check / Installation & Core Dependencies
 #-------------------------------------------------------------------------------
-echo -e "\n📦 [Step 4/13] Checking AUR Helper (yay/paru)..."
+echo -e "\n📦 [Step 4/13] Checking AUR Helper (yay/paru) & Core Rendering Tools..."
 AUR_HELPER=""
 if command -v yay &>/dev/null; then
     AUR_HELPER="yay"
@@ -118,6 +118,12 @@ else
     AUR_HELPER="yay"
 fi
 echo "✓ Using AUR helper: $AUR_HELPER"
+
+echo "Verifying gettext, waybar & swww rendering dependencies..."
+sudo pacman -S --needed --noconfirm gettext waybar 2>/dev/null || true
+if ! command -v swww &>/dev/null; then
+    $AUR_HELPER -S --needed --noconfirm swww 2>/dev/null || true
+fi
 
 #-------------------------------------------------------------------------------
 # 4. Interactive Modular Menu
