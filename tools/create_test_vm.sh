@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
 #===============================================================================
-#   CachyOS / Arch VM Creator for Testing Dotfiles & System Setup
-#   Launches a QEMU/KVM Virtual Machine with CachyOS ISO or Installed Disk
+#   CachyOS / Arch VM Creator & Backup Manager (QEMU/KVM)
 #===============================================================================
 
 VM_DIR="$HOME/CachyOS_Test_VM"
 ISO_NAME="cachyos-desktop.iso"
 ISO_PATH="$VM_DIR/$ISO_NAME"
 DISK_PATH="$VM_DIR/cachyos_test.qcow2"
+BACKUP_DISK="$VM_DIR/cachyos_test_clean_backup.qcow2"
 DISK_SIZE="25G"
 RAM_SIZE="4096" # 4GB RAM
 CPU_CORES="4"
 
-BOOT_MODE="menu" # menu, iso, hd
+BOOT_MODE="menu" # menu, iso, hd, backup, restore
 
 for arg in "$@"; do
     case $arg in
@@ -23,8 +23,40 @@ for arg in "$@"; do
         --iso|-iso)
             BOOT_MODE="iso"
             ;;
+        --backup)
+            BOOT_MODE="backup"
+            ;;
+        --restore)
+            BOOT_MODE="restore"
+            ;;
     esac
 done
+
+mkdir -p "$VM_DIR"
+
+# Quick Backup Mode
+if [ "$BOOT_MODE" = "backup" ]; then
+    echo "💾 Creating clean snapshot backup of virtual disk..."
+    if [ -f "$DISK_PATH" ]; then
+        cp "$DISK_PATH" "$BACKUP_DISK"
+        echo "✓ Backup created successfully at: $BACKUP_DISK"
+    else
+        echo "❌ Virtual disk $DISK_PATH not found!"
+    fi
+    exit 0
+fi
+
+# Quick Restore Mode
+if [ "$BOOT_MODE" = "restore" ]; then
+    echo "🔄 Restoring virtual disk from clean snapshot backup..."
+    if [ -f "$BACKUP_DISK" ]; then
+        cp "$BACKUP_DISK" "$DISK_PATH"
+        echo "✓ Restored $DISK_PATH to clean backup state!"
+    else
+        echo "❌ Backup file $BACKUP_DISK not found!"
+    fi
+    exit 0
+fi
 
 echo "================================================================="
 echo "   🖥️ CachyOS Virtual Machine Installer & Tester (QEMU/KVM)"
@@ -36,19 +68,28 @@ if ! command -v qemu-system-x86_64 &>/dev/null || ! command -v qemu-img &>/dev/n
     sudo pacman -Sy --needed --noconfirm qemu-desktop qemu-system-x86 edk2-ovmf
 fi
 
-mkdir -p "$VM_DIR"
-
 # 2. Boot Mode Selection
 if [ "$BOOT_MODE" = "menu" ]; then
-    echo "اختر وضع الإقلاع / Select Boot Mode:"
-    echo "  [1] Boot Installed System / الإقلاع من النظام المثبت على الهارد الوهمي (بعد التثبيت)"
+    echo "اختر وضع التشغيل / Select Mode:"
+    echo "  [1] Boot Installed System / الإقلاع من النظام المثبت على الهارد الوهمي"
     echo "  [2] Boot Live ISO Installer / الإقلاع من أسطوانة التثبيت Live ISO"
-    read -p "اختر الخيار [1/2] (Default: 1): " choice
-    if [ "$choice" = "2" ]; then
-        BOOT_MODE="iso"
-    else
-        BOOT_MODE="hd"
-    fi
+    echo "  [3] Create Clean Backup / أخذ نسخة احتياطية من الهارد الوهمي الآن"
+    echo "  [4] Restore Clean Backup / استعادة النسخة الاحتياطية النظيفة للهارد"
+    read -p "اختر الخيار [1/2/3/4] (Default: 1): " choice
+    case $choice in
+        2) BOOT_MODE="iso" ;;
+        3)
+            echo "💾 Creating backup copy of $DISK_PATH..."
+            [ -f "$DISK_PATH" ] && cp "$DISK_PATH" "$BACKUP_DISK" && echo "✓ Backup created: $BACKUP_DISK"
+            exit 0
+            ;;
+        4)
+            echo "🔄 Restoring backup..."
+            [ -f "$BACKUP_DISK" ] && cp "$BACKUP_DISK" "$DISK_PATH" && echo "✓ Restored $DISK_PATH"
+            exit 0
+            ;;
+        *) BOOT_MODE="hd" ;;
+    esac
 fi
 
 # 3. Handle ISO download if ISO boot is needed
