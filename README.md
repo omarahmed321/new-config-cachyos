@@ -57,7 +57,8 @@ chmod +x install.sh sync.sh
 ├── wallpapers/               # الخلفيات المخصصة
 ├── fonts/                    # الخطوط المخصصة
 ├── services/                 # قائمة خدمات systemd user المفعّلة
-└── tools/                    # أدوات التحكم بعد التثبيت (GUI)
+└── tools/                    # أدوات التحكم بعد التثبيت واختبار VM (GUI/CLI)
+    ├── create_test_vm.sh    # سكريبت إنشاء وتشغيل VM افتراضية لتوزيعة CachyOS
     ├── nightlight-config.py  # أداة ضبط الإضاءة الليلية
     ├── display-config.py     # أداة ضبط الشاشات والماوس
     └── monitor-alignment.py  # أداة محاذاة وترتيب الشاشات المتعددة
