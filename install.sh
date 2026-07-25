@@ -10,11 +10,6 @@ BACKUP_DIR="$HOME/.dotfiles_backup/$BACKUP_DATE"
 FAILED_STEPS=()
 SUCCESS_STEPS=()
 
-# Re-attach TTY for interactive read prompts when piped via curl | bash
-if [ -c /dev/tty ]; then
-    exec < /dev/tty 2>/dev/null || true
-fi
-
 # Auto-clone repository if running standalone via curl without local repo files
 if [ ! -f "$REPO_DIR/packages/pacman.txt" ]; then
     echo "📥 Downloading dotfiles repository from GitHub..."
