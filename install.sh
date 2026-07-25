@@ -312,14 +312,26 @@ if $INSTALL_THEMES; then
         echo "✓ Active wallpaper configured ($ACTIVE_WALL)."
     fi
 
-    # Configure SDDM Theme if installed
-    if [ -d "/usr/share/sddm/themes/sddm-astronaut-theme" ] || pacman -Qi sddm-astronaut-theme &>/dev/null; then
-        echo "Configuring SDDM Astronaut Theme..."
-        sudo mkdir -p /etc/sddm.conf.d
-        echo -e "[Theme]\nCurrent=sddm-astronaut-theme" | sudo tee /etc/sddm.conf >/dev/null
-        echo -e "[Theme]\nCurrent=sddm-astronaut-theme" | sudo tee /etc/sddm.conf.d/theme.conf >/dev/null
-        echo "✓ SDDM Astronaut Theme configured."
-    fi
+    # Configure SDDM Theme & Default Hyprland Session
+    echo "Configuring SDDM Astronaut Theme & Default Hyprland Session..."
+    sudo mkdir -p /etc/sddm.conf.d
+    sudo tee /etc/sddm.conf >/dev/null << 'EOF'
+[Theme]
+Current=sddm-astronaut-theme
+
+[Session]
+AllwaysSetSession=true
+Session=hyprland.desktop
+EOF
+    sudo tee /etc/sddm.conf.d/theme.conf >/dev/null << 'EOF'
+[Theme]
+Current=sddm-astronaut-theme
+
+[Session]
+AllwaysSetSession=true
+Session=hyprland.desktop
+EOF
+    echo "✓ SDDM Astronaut Theme & Hyprland Session configured."
 
     # Set user avatar for SDDM
     if [ -n "$ACTIVE_WALL" ]; then
@@ -327,6 +339,10 @@ if $INSTALL_THEMES; then
         sudo mkdir -p /var/lib/AccountsService/icons/
         sudo cp "$ACTIVE_WALL" "/var/lib/AccountsService/icons/$USER" 2>/dev/null || true
     fi
+
+    # Disable Noctalia shell service to force standard Waybar & Hyde session
+    systemctl --user disable noctalia 2>/dev/null || true
+    systemctl --user stop noctalia 2>/dev/null || true
 
     SUCCESS_STEPS+=("Fonts & Themes")
 fi

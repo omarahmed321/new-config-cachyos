@@ -3,6 +3,7 @@
 
 hl.on("hyprland.start", function ()
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
-    hl.exec_cmd("noctalia")
+    hl.exec_cmd("sleep 1 && $HOME/.local/share/bin/wbarconfgen.sh")
+    hl.exec_cmd("sleep 2 && $HOME/.local/share/bin/swwwallpaper.sh")
     hl.exec_cmd("xhost +SI:localuser:root")
 end)
