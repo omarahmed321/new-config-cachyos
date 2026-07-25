@@ -300,8 +300,12 @@ if $INSTALL_THEMES; then
     if [ -n "$ACTIVE_WALL" ]; then
         ln -sf "$ACTIVE_WALL" "$HOME/.cache/hyde/wall.set"
         if command -v swww &>/dev/null; then
-            swww-daemon 2>/dev/null || swww init 2>/dev/null || true
+            swww-daemon &>/dev/null &
+            sleep 1
             swww img "$ACTIVE_WALL" 2>/dev/null || true
+        fi
+        if [ -f "$HOME/.local/share/bin/swwwallpaper.sh" ]; then
+            bash "$HOME/.local/share/bin/swwwallpaper.sh" &>/dev/null &
         fi
         echo "✓ Active wallpaper configured ($ACTIVE_WALL)."
     fi
