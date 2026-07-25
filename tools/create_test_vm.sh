@@ -17,10 +17,10 @@ echo "================================================================="
 echo "   🖥️ CachyOS Virtual Machine Installer & Tester (QEMU/KVM)"
 echo "================================================================="
 
-# 1. Verify QEMU installation
+# 1. Verify QEMU installation (with pacman DB refresh -Sy)
 if ! command -v qemu-system-x86_64 &>/dev/null || ! command -v qemu-img &>/dev/null; then
-    echo "⚠️ QEMU is not installed. Installing qemu-desktop using pacman..."
-    sudo pacman -S --needed --noconfirm qemu-desktop qemu-system-x86 edk2-ovmf
+    echo "⚠️ QEMU is not installed. Updating pacman DB and installing qemu-desktop..."
+    sudo pacman -Sy --needed --noconfirm qemu-desktop qemu-system-x86 edk2-ovmf
 fi
 
 mkdir -p "$VM_DIR"
@@ -28,11 +28,11 @@ mkdir -p "$VM_DIR"
 # 2. Check / Download CachyOS ISO
 if [ ! -f "$ISO_PATH" ]; then
     echo "📥 Downloading latest CachyOS Live ISO..."
-    ISO_URL="https://mirror.cachyos.org/ISO/desktop/250119/cachyos-desktop-linux-250119.iso"
+    ISO_URL="https://mirror.cachyos.org/ISO/desktop/260628/cachyos-desktop-linux-260628.iso"
     
     if command -v curl &>/dev/null; then
         curl -L -o "$ISO_PATH" "$ISO_URL" || {
-            echo "Fallback: Downloading from secondary CachyOS mirror..."
+            echo "Fallback: Downloading from secondary mirror..."
             curl -L -o "$ISO_PATH" "https://sourceforge.net/projects/cachyos-arch/files/gui/cachyos-desktop-linux-latest.iso/download"
         }
     elif command -v wget &>/dev/null; then
@@ -58,7 +58,7 @@ if [ -e /dev/kvm ] && [ -w /dev/kvm ]; then
     echo "⚡ KVM Hardware Acceleration: ENABLED"
 else
     KVM_FLAG="-cpu max"
-    echo "⚠️ KVM not accessible. Running in software emulation mode (slower)."
+    echo "⚠️ KVM not accessible. Running in software emulation mode."
 fi
 
 echo -e "\n================================================================="
