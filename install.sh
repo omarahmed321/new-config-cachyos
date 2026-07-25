@@ -231,8 +231,14 @@ if $INSTALL_CONFIGS; then
                 cp -L "$cdir" "$HOME/.config/"
             fi
         done
+        rm -f "$HOME/.config/hypr/hyprland.lua" 2>/dev/null || true
         SUCCESS_STEPS+=("Configuration Files & Keybindings")
     fi
+fi
+
+# Automatically reload Hyprland live if running
+if command -v hyprctl &>/dev/null; then
+    hyprctl reload 2>/dev/null || true
 fi
 
 #-------------------------------------------------------------------------------
