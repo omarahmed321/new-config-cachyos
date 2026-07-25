@@ -17,7 +17,7 @@ echo "================================================================="
 echo "   🖥️ CachyOS Virtual Machine Installer & Tester (QEMU/KVM)"
 echo "================================================================="
 
-# 1. Verify QEMU installation (with pacman DB refresh -Sy)
+# 1. Verify QEMU installation
 if ! command -v qemu-system-x86_64 &>/dev/null || ! command -v qemu-img &>/dev/null; then
     echo "⚠️ QEMU is not installed. Updating pacman DB and installing qemu-desktop..."
     sudo pacman -Sy --needed --noconfirm qemu-desktop qemu-system-x86 edk2-ovmf
@@ -25,21 +25,30 @@ fi
 
 mkdir -p "$VM_DIR"
 
+# Check if existing ISO is invalid/corrupted (< 500MB)
+if [ -f "$ISO_PATH" ]; then
+    ISO_SIZE=$(stat -c%s "$ISO_PATH" 2>/dev/null || echo 0)
+    if [ "$ISO_SIZE" -lt 500000000 ]; then
+        echo "⚠️ Found broken/incomplete ISO file ($ISO_SIZE bytes). Deleting..."
+        rm -f "$ISO_PATH"
+    fi
+fi
+
 # 2. Check / Download CachyOS ISO
 if [ ! -f "$ISO_PATH" ]; then
-    echo "📥 Downloading latest CachyOS Live ISO..."
-    ISO_URL="https://mirror.cachyos.org/ISO/desktop/260628/cachyos-desktop-linux-260628.iso"
+    echo "📥 Downloading CachyOS Live ISO (Please wait a moment)..."
+    ISO_URL="https://sourceforge.net/projects/cachyos-arch/files/gui/cachyos-desktop-linux-latest.iso/download"
     
     if command -v curl &>/dev/null; then
-        curl -L -o "$ISO_PATH" "$ISO_URL" || {
-            echo "Fallback: Downloading from secondary mirror..."
-            curl -L -o "$ISO_PATH" "https://sourceforge.net/projects/cachyos-arch/files/gui/cachyos-desktop-linux-latest.iso/download"
+        curl -C - -L -o "$ISO_PATH" "$ISO_URL" || {
+            echo "Fallback: Downloading from official CachyOS mirror..."
+            curl -C - -L -o "$ISO_PATH" "https://mirror.cachyos.org/ISO/desktop/260628/cachyos-desktop-linux-260628.iso"
         }
     elif command -v wget &>/dev/null; then
         wget -O "$ISO_PATH" "$ISO_URL"
     fi
 else
-    echo "✓ Found CachyOS ISO at: $ISO_PATH"
+    echo "✓ Found valid CachyOS ISO at: $ISO_PATH"
 fi
 
 # 3. Create QCOW2 Virtual Disk
