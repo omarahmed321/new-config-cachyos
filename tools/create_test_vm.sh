@@ -2,7 +2,7 @@
 
 #===============================================================================
 #   CachyOS / Arch VM Creator for Testing Dotfiles & System Setup
-#   Launches a QEMU/KVM Virtual Machine with CachyOS ISO
+#   Launches a QEMU/KVM Virtual Machine with CachyOS ISO or Installed Disk
 #===============================================================================
 
 VM_DIR="$HOME/CachyOS_Test_VM"
@@ -12,6 +12,19 @@ DISK_PATH="$VM_DIR/cachyos_test.qcow2"
 DISK_SIZE="25G"
 RAM_SIZE="4096" # 4GB RAM
 CPU_CORES="4"
+
+BOOT_MODE="menu" # menu, iso, hd
+
+for arg in "$@"; do
+    case $arg in
+        --installed|--hd|-hd)
+            BOOT_MODE="hd"
+            ;;
+        --iso|-iso)
+            BOOT_MODE="iso"
+            ;;
+    esac
+done
 
 echo "================================================================="
 echo "   🖥️ CachyOS Virtual Machine Installer & Tester (QEMU/KVM)"
@@ -25,39 +38,49 @@ fi
 
 mkdir -p "$VM_DIR"
 
-# Delete any invalid/incomplete ISO (< 1GB)
-if [ -f "$ISO_PATH" ]; then
-    ISO_SIZE=$(stat -c%s "$ISO_PATH" 2>/dev/null || echo 0)
-    if [ "$ISO_SIZE" -lt 1000000000 ]; then
-        echo "⚠️ Removing invalid ISO file ($ISO_SIZE bytes)..."
-        rm -f "$ISO_PATH"
+# 2. Boot Mode Selection
+if [ "$BOOT_MODE" = "menu" ]; then
+    echo "اختر وضع الإقلاع / Select Boot Mode:"
+    echo "  [1] Boot Installed System / الإقلاع من النظام المثبت على الهارد الوهمي (بعد التثبيت)"
+    echo "  [2] Boot Live ISO Installer / الإقلاع من أسطوانة التثبيت Live ISO"
+    read -p "اختر الخيار [1/2] (Default: 1): " choice
+    if [ "$choice" = "2" ]; then
+        BOOT_MODE="iso"
+    else
+        BOOT_MODE="hd"
     fi
 fi
 
-# 2. Download CachyOS / Arch Live ISO
-if [ ! -f "$ISO_PATH" ]; then
-    echo "📥 Downloading CachyOS Live ISO (3.1 GB)..."
-    PRIMARY_URL="https://mirror.cachyos.org/ISO/desktop/260628/cachyos-desktop-linux-260628.iso"
-    FALLBACK_URL="https://geo.mirror.pkgbuild.com/iso/latest/archlinux-x86_64.iso"
-    
-    if ! curl -C - -fL --progress-bar -o "$ISO_PATH" "$PRIMARY_URL"; then
-        echo "Fallback: Downloading Arch Linux Live ISO..."
-        curl -C - -fL --progress-bar -o "$ISO_PATH" "$FALLBACK_URL"
+# 3. Handle ISO download if ISO boot is needed
+if [ "$BOOT_MODE" = "iso" ]; then
+    if [ -f "$ISO_PATH" ]; then
+        ISO_SIZE=$(stat -c%s "$ISO_PATH" 2>/dev/null || echo 0)
+        if [ "$ISO_SIZE" -lt 1000000000 ]; then
+            echo "⚠️ Removing invalid ISO file ($ISO_SIZE bytes)..."
+            rm -f "$ISO_PATH"
+        fi
     fi
-else
-    echo "✓ Valid Live ISO ready: $ISO_PATH"
+
+    if [ ! -f "$ISO_PATH" ]; then
+        echo "📥 Downloading CachyOS Live ISO (3.1 GB)..."
+        PRIMARY_URL="https://mirror.cachyos.org/ISO/desktop/260628/cachyos-desktop-linux-260628.iso"
+        FALLBACK_URL="https://geo.mirror.pkgbuild.com/iso/latest/archlinux-x86_64.iso"
+        
+        if ! curl -C - -fL --progress-bar -o "$ISO_PATH" "$PRIMARY_URL"; then
+            echo "Fallback: Downloading Arch Linux Live ISO..."
+            curl -C - -fL --progress-bar -o "$ISO_PATH" "$FALLBACK_URL"
+        fi
+    fi
 fi
 
-# 3. Create QCOW2 Virtual Disk
+# 4. Create QCOW2 Virtual Disk if not present
 if [ ! -f "$DISK_PATH" ]; then
     echo "💾 Creating $DISK_SIZE Virtual Disk image..."
     qemu-img create -f qcow2 "$DISK_PATH" "$DISK_SIZE"
     echo "✓ Virtual disk created."
-else
-    echo "✓ Virtual disk exists: $DISK_PATH"
 fi
 
-# 4. Check KVM Acceleration
+# 5. Check KVM Acceleration
 KVM_FLAG=""
 if [ -e /dev/kvm ] && [ -w /dev/kvm ]; then
     KVM_FLAG="-enable-kvm -cpu host"
@@ -68,19 +91,33 @@ else
 fi
 
 echo -e "\n================================================================="
-echo "   🚀 Booting Virtual Machine..."
-echo "   Inside the VM, open terminal and run your one-liner to test:"
-echo "   curl -sSL https://raw.githubusercontent.com/omarahmed321/new-config-cachyos/main/install.sh | bash"
+if [ "$BOOT_MODE" = "hd" ]; then
+    echo "   🚀 Booting Installed CachyOS System from Hard Disk..."
+else
+    echo "   🚀 Booting CachyOS Live ISO Installer..."
+fi
 echo "================================================================="
 
-# 5. Launch QEMU VM
-qemu-system-x86_64 \
-    $KVM_FLAG \
-    -smp "$CPU_CORES" \
-    -m "$RAM_SIZE" \
-    -vga virtio \
-    -display default,show-cursor=on \
-    -drive file="$DISK_PATH",format=qcow2,if=virtio \
-    -cdrom "$ISO_PATH" \
-    -boot order=d \
-    -net nic,model=virtio -net user
+# 6. Launch QEMU VM based on chosen boot mode
+if [ "$BOOT_MODE" = "hd" ]; then
+    qemu-system-x86_64 \
+        $KVM_FLAG \
+        -smp "$CPU_CORES" \
+        -m "$RAM_SIZE" \
+        -vga virtio \
+        -display default,show-cursor=on \
+        -drive file="$DISK_PATH",format=qcow2,if=virtio \
+        -boot order=c \
+        -net nic,model=virtio -net user
+else
+    qemu-system-x86_64 \
+        $KVM_FLAG \
+        -smp "$CPU_CORES" \
+        -m "$RAM_SIZE" \
+        -vga virtio \
+        -display default,show-cursor=on \
+        -drive file="$DISK_PATH",format=qcow2,if=virtio \
+        -cdrom "$ISO_PATH" \
+        -boot order=d \
+        -net nic,model=virtio -net user
+fi
