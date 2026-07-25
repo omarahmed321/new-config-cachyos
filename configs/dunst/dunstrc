@@ -217,7 +217,7 @@
     max_icon_size = 128
 
     # Paths to default icons (only necessary when not using recursive icon lookup)
-    icon_path = /home/omar/.icons/Tela-circle-dracula/16/actions:/home/omar/.icons/Tela-circle-dracula/16/apps:/home/omar/.icons/Tela-circle-dracula/16/devices:/home/omar/.icons/Tela-circle-dracula/16/mimetypes:/home/omar/.icons/Tela-circle-dracula/16/panel:/home/omar/.icons/Tela-circle-dracula/16/places:/home/omar/.icons/Tela-circle-dracula/16/status
+    icon_path = ~/.icons/Tela-circle-dracula/16/actions:~/.icons/Tela-circle-dracula/16/apps:~/.icons/Tela-circle-dracula/16/devices:~/.icons/Tela-circle-dracula/16/mimetypes:~/.icons/Tela-circle-dracula/16/panel:~/.icons/Tela-circle-dracula/16/places:~/.icons/Tela-circle-dracula/16/status
 
     ### History ###
 
@@ -231,7 +231,7 @@
     ### Misc/Advanced ###
 
     # dmenu path.
-    dmenu = /usr/bin/rofi -config "/home/omar/.config/rofi/notification.rasi" -dmenu -p dunst:
+    dmenu = /usr/bin/rofi -config "~/.config/rofi/notification.rasi" -dmenu -p dunst:
 
     # Browser for opening urls in context menu.
     browser = /usr/bin/xdg-open
@@ -445,19 +445,19 @@
     background = "#f5e0dc"
     foreground = "#1e1e2e"
     frame_color = "#f38ba8"
-    icon = "/home/omar/.config/dunst/icons/critical.svg"
+    icon = "~/.config/dunst/icons/critical.svg"
     timeout = 0
 
 [urgency_low]
     background = "#65A36580"
     foreground = "#CCFFCCE6"
     frame_color = "#65A36503"
-    icon = "/home/omar/.config/dunst/icons/hyprdots.svg"
+    icon = "~/.config/dunst/icons/hyprdots.svg"
     timeout = 5
 
 [urgency_normal]
     background = "#3D6B3A80"
     foreground = "#CFFFCCE6"
     frame_color = "#3D6B3A03"
-    icon = "/home/omar/.config/dunst/icons/hyprdots.svg"
+    icon = "~/.config/dunst/icons/hyprdots.svg"
     timeout = 5

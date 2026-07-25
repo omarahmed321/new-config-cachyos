@@ -5,9 +5,6 @@ alsa-firmware
 alsa-plugins
 alsa-utils
 amd-ucode
-antigravity
-antigravity-cli
-antigravity-ide
 awesome-terminal-fonts
 awww
 base
