@@ -241,20 +241,6 @@ if $INSTALL_CONFIGS; then
     fi
 fi
 
-# Automatically reload Hyprland and launch Waybar & Wallpaper live if running
-if command -v hyprctl &>/dev/null; then
-    hyprctl reload 2>/dev/null || true
-fi
-
-if [ -f "$HOME/.local/share/bin/wbarconfgen.sh" ]; then
-    pkill -x waybar 2>/dev/null || true
-    bash "$HOME/.local/share/bin/wbarconfgen.sh" &>/dev/null &
-fi
-
-if [ -f "$HOME/.local/share/bin/swwwallpaper.sh" ]; then
-    bash "$HOME/.local/share/bin/swwwallpaper.sh" &>/dev/null &
-fi
-
 #-------------------------------------------------------------------------------
 # 9. Restore Dotfiles
 #-------------------------------------------------------------------------------
@@ -365,6 +351,21 @@ if $INSTALL_VSCODE && [ -d "$REPO_DIR/vscode" ]; then
         echo "✓ VSCode extensions restored."
     fi
     SUCCESS_STEPS+=("VSCode Setup")
+fi
+
+# Automatically reload Hyprland and launch Waybar & Wallpaper live after complete setup
+if command -v hyprctl &>/dev/null; then
+    hyprctl reload 2>/dev/null || true
+fi
+
+if [ -f "$HOME/.local/share/bin/wbarconfgen.sh" ]; then
+    pkill -f noctalia-shell 2>/dev/null || true
+    pkill -x waybar 2>/dev/null || true
+    bash "$HOME/.local/share/bin/wbarconfgen.sh" &>/dev/null &
+fi
+
+if [ -f "$HOME/.local/share/bin/swwwallpaper.sh" ]; then
+    bash "$HOME/.local/share/bin/swwwallpaper.sh" &>/dev/null &
 fi
 
 #-------------------------------------------------------------------------------
