@@ -241,9 +241,18 @@ if $INSTALL_CONFIGS; then
     fi
 fi
 
-# Automatically reload Hyprland live if running
+# Automatically reload Hyprland and launch Waybar & Wallpaper live if running
 if command -v hyprctl &>/dev/null; then
     hyprctl reload 2>/dev/null || true
+fi
+
+if [ -f "$HOME/.local/share/bin/wbarconfgen.sh" ]; then
+    pkill -x waybar 2>/dev/null || true
+    bash "$HOME/.local/share/bin/wbarconfgen.sh" &>/dev/null &
+fi
+
+if [ -f "$HOME/.local/share/bin/swwwallpaper.sh" ]; then
+    bash "$HOME/.local/share/bin/swwwallpaper.sh" &>/dev/null &
 fi
 
 #-------------------------------------------------------------------------------
