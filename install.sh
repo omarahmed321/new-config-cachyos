@@ -284,6 +284,24 @@ if $INSTALL_THEMES; then
         cp -rL "$REPO_DIR/wallpapers"/* "$HOME/.config/hypr/themes/" 2>/dev/null || true
         echo "✓ Wallpapers deployed."
     fi
+
+    # Set active wallpaper link and apply via swww
+    mkdir -p "$HOME/.cache/hyde"
+    ACTIVE_WALL=""
+    if [ -f "$HOME/.config/hyde/themes/Gruvbox Retro/wallpapers/background_for_me.jpg" ]; then
+        ACTIVE_WALL="$HOME/.config/hyde/themes/Gruvbox Retro/wallpapers/background_for_me.jpg"
+    else
+        ACTIVE_WALL="$(find "$HOME/.config/hyde/themes" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -n 1)"
+    fi
+
+    if [ -n "$ACTIVE_WALL" ]; then
+        ln -sf "$ACTIVE_WALL" "$HOME/.cache/hyde/wall.set"
+        if command -v swww &>/dev/null; then
+            swww-daemon 2>/dev/null || swww init 2>/dev/null || true
+            swww img "$ACTIVE_WALL" 2>/dev/null || true
+        fi
+        echo "✓ Active wallpaper configured ($ACTIVE_WALL)."
+    fi
     SUCCESS_STEPS+=("Fonts & Themes")
 fi
 

@@ -66,6 +66,7 @@ echo "✓ Saved $(wc -l < "$REPO_DIR/packages/aur.txt" 2>/dev/null || echo 0) AU
 echo "=== [3/6] Copying Configuration Files (.config) ==="
 CONFIG_DIRS=(
     "hypr"
+    "hyde"
     "waybar"
     "rofi"
     "dunst"
