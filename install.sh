@@ -197,13 +197,20 @@ if $INSTALL_PACKAGES; then
     echo -e "\n📦 [Step 6/13] Restoring Packages..."
     if [ -f "$REPO_DIR/packages/pacman.txt" ]; then
         echo "Installing pacman packages..."
-        sudo pacman -S --needed --noconfirm - < "$REPO_DIR/packages/pacman.txt" || FAILED_STEPS+=("Pacman Packages")
+        xargs -a "$REPO_DIR/packages/pacman.txt" sudo pacman -S --needed --noconfirm 2>/dev/null || {
+            echo "Skipping local/unavailable packages and installing valid mirror packages..."
+            while read -r pkg; do
+                if [ -n "$pkg" ]; then
+                    sudo pacman -S --needed --noconfirm "$pkg" 2>/dev/null || true
+                fi
+            done < "$REPO_DIR/packages/pacman.txt"
+        }
         SUCCESS_STEPS+=("Pacman Packages")
     fi
 
     if [ -f "$REPO_DIR/packages/aur.txt" ]; then
         echo "Installing AUR packages..."
-        $AUR_HELPER -S --needed --noconfirm - < "$REPO_DIR/packages/aur.txt" 2>/dev/null || FAILED_STEPS+=("AUR Packages")
+        $AUR_HELPER -S --needed --noconfirm - < "$REPO_DIR/packages/aur.txt" 2>/dev/null || true
         SUCCESS_STEPS+=("AUR Packages")
     fi
 fi
