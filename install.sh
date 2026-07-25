@@ -12,16 +12,19 @@ SUCCESS_STEPS=()
 
 # Auto-clone repository if running standalone via curl without local repo files
 if [ ! -f "$REPO_DIR/packages/pacman.txt" ]; then
-    echo "📥 Downloading dotfiles repository from GitHub..."
-    TMP_REPO="/tmp/new-config-cachyos"
-    rm -rf "$TMP_REPO"
-    if command -v git &>/dev/null; then
-        git clone https://github.com/omarahmed321/new-config-cachyos.git "$TMP_REPO"
+    DOTFILES_DIR="$HOME/cachyos-dotfiles"
+    echo "📥 Downloading dotfiles repository into $DOTFILES_DIR..."
+    if [ -d "$DOTFILES_DIR" ]; then
+        (cd "$DOTFILES_DIR" && git pull 2>/dev/null || true)
     else
-        sudo pacman -S --needed --noconfirm git
-        git clone https://github.com/omarahmed321/new-config-cachyos.git "$TMP_REPO"
+        if command -v git &>/dev/null; then
+            git clone https://github.com/omarahmed321/new-config-cachyos.git "$DOTFILES_DIR"
+        else
+            sudo pacman -S --needed --noconfirm git
+            git clone https://github.com/omarahmed321/new-config-cachyos.git "$DOTFILES_DIR"
+        fi
     fi
-    REPO_DIR="$TMP_REPO"
+    REPO_DIR="$DOTFILES_DIR"
     cd "$REPO_DIR" || exit 1
 fi
 
