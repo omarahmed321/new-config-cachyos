@@ -214,6 +214,7 @@ fi
 if $INSTALL_CONFIGS; then
     echo -e "\n⚙️ [Step 7/13] Deploying Configuration Files & Keybindings..."
     mkdir -p "$HOME/.config"
+    rm -f "$HOME/.config/hypr/hyprland.lua" 2>/dev/null || true
 
     if [ -d "$REPO_DIR/configs" ]; then
         for cdir in "$REPO_DIR/configs"/*; do
