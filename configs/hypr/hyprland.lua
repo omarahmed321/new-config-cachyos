@@ -1,6 +1,6 @@
 -- CachyOS Hyprland Lua Configuration
 local home = os.getenv("HOME") or "/home/" .. (os.getenv("USER") or "omar")
-package.path = home .. "/.config/hypr/?.lua;" .. home .. "/.config/hypr/?/init.lua;" .. package.path
+package.path = home .. "/.config/hypr/?.lua;" .. home .. "/.config/hypr/?/init.lua;" .. home .. "/.config/hypr/config/?.lua;" .. package.path
 
 require("config.animations")
 require("config.autostart")

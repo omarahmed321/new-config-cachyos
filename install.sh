@@ -230,7 +230,6 @@ if $INSTALL_CONFIGS; then
                 cp -L "$cdir" "$HOME/.config/"
             fi
         done
-        rm -f "$HOME/.config/hypr/hyprland.lua" 2>/dev/null || true
         SUCCESS_STEPS+=("Configuration Files & Keybindings")
     fi
 fi
