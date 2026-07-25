@@ -243,6 +243,9 @@ if $INSTALL_CONFIGS; then
                 cp -L "$cdir" "$HOME/.config/"
             fi
         done
+        mkdir -p "$HOME/.config/hypr/themes"
+        touch "$HOME/.config/hypr/themes/colors.conf" 2>/dev/null || true
+        touch "$HOME/.config/hypr/themes/theme.conf" 2>/dev/null || true
         SUCCESS_STEPS+=("Configuration Files & Keybindings")
     fi
 fi
