@@ -4,11 +4,31 @@
 #   Personal Dotfiles Installer for CachyOS / Arch Wayland (Hyprland)
 #===============================================================================
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
 BACKUP_DATE="$(date +%Y%m%d_%H%M%S)"
 BACKUP_DIR="$HOME/.dotfiles_backup/$BACKUP_DATE"
 FAILED_STEPS=()
 SUCCESS_STEPS=()
+
+# Re-attach TTY for interactive read prompts when piped via curl | bash
+if [ -c /dev/tty ]; then
+    exec < /dev/tty 2>/dev/null || true
+fi
+
+# Auto-clone repository if running standalone via curl without local repo files
+if [ ! -f "$REPO_DIR/packages/pacman.txt" ]; then
+    echo "📥 Downloading dotfiles repository from GitHub..."
+    TMP_REPO="/tmp/new-config-cachyos"
+    rm -rf "$TMP_REPO"
+    if command -v git &>/dev/null; then
+        git clone https://github.com/omarahmed321/new-config-cachyos.git "$TMP_REPO"
+    else
+        sudo pacman -S --needed --noconfirm git
+        git clone https://github.com/omarahmed321/new-config-cachyos.git "$TMP_REPO"
+    fi
+    REPO_DIR="$TMP_REPO"
+    cd "$REPO_DIR" || exit 1
+fi
 
 # Parse CLI Flags
 MODE="interactive"
